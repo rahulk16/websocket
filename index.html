@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello world</title>
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="path/to/chartjs/dist/Chart.min.css"
+    />
+</head>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    var socket = io();
+    socket.on("message", function(data) {
+        document.getElementById("body").innerHTML += data;
+        drawChart(data);
+    });
+</script>
+
+<script
+        type="text/javascript"
+        src="https://www.gstatic.com/charts/loader.js"
+></script>
+
+<script type="text/javascript">
+    // Load google charts
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Draw the chart and set the chart values
+    function drawChart(value) {
+        var data1 = JSON.parse(value);
+        console.log(typeof Number(data1.totalRecords));
+
+        var data = google.visualization.arrayToDataTable([
+            ["Message", data1.message],
+            ["Total Records", Number(data1.totalRecords)],
+            ["Filtered Records", Number(data1.filteredRecords)]
+        ]);
+
+        // Optional; add a title and set the width and height of the chart
+        var options = {
+            title: "Message Status - " + data1.message,
+            width: 550,
+            height: 400
+        };
+
+        // Display the chart inside the <div> element with id="piechart"
+        var chart = new google.visualization.PieChart(
+            document.getElementById("piechart")
+        );
+        chart.draw(data, options);
+    }
+</script>
+
+<body id="body">
+<div id="piechart"></div>
+</body>
+</html>
